@@ -115,8 +115,14 @@
                                 <v-text-field
                                     v-model="form.houseArea"
                                     :rules="minRequere"
-                                    label="Общая площадь домов"
+                                    label="Общая площадь домов м2"
                                     required
+                                    oninput="this.value = (()=>{
+                                        const f = x => ( (x.toString().includes('.')) ? (x.toString().split('.').pop().length) : (0) );
+                                        this.value = this.value.replace(',','.').replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '').toLocaleString('ru')
+
+                                        return Number(this.value.replace(',','.').replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '')).toLocaleString('ru').replace(',','.')
+                                    })()"
                                 >
                                 </v-text-field>
 
@@ -159,7 +165,7 @@
                 valid: true,
                 form: {
                     houseCount: 1,
-                    houseArea: 0,
+                    houseArea: 1000,
                     countComp: 1,
                     active: 1,
                 },

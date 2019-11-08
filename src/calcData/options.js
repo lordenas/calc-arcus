@@ -142,6 +142,7 @@ export default function(data) {
 
 			item.subCat[1].active = data.houseArea < 70000 && data.countComp < 7 ? false : true // ук
 			item.subCat[1].activeSelect = data.houseArea > 300000 || data.countComp > 30 ? 1 : 0 // ук
+			item.subCat[1].activeSelect == 0 ? item.subCat[1].price = 8100 : 22600
 		} else if(item.id == 10) {
 			item.subCat[0].inputCalc = countComp //ук кашепровский
 			item.subCat[0].price = Math.ceil(countComp / 2) * item.onePrice  //ук кашепровский
