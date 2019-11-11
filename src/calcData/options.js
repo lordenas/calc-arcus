@@ -124,50 +124,56 @@ export default function(data) {
 
 	let configStep2 = data.active == 1 ? dataFileTSG : dataFileUK
 
-	for(let item of configStep2.oneTimeCosts) {
-		if(item.id == 23) {
-			item.subCat[0].price = config.dsqOneTimeCosts //тсж
-		} else if(item.id == 29) {
-			item.subCat[0].inputCalc = countComp //тсж кашепровский
-			item.subCat[0].price = Math.ceil(countComp / 2) * item.onePrice  //тсж кашепровский
-		} else if(item.id == 0) {
-			//---------------------
-			item.subCat[0].price = config.dsqOneTimeCosts // ук
-		} else if(item.id == 3) {
-			item.subCat[1].active = data.houseArea >=150000 || data.countComp >=15 ? true : false // ук диспетчерезация
-		} else if(item.id == 6) {
-			item.subCat[0].activeSelect = data.houseArea >=100000 || data.countComp >=10 ? 1 : 0 // ук
-			item.subCat[0].activeSelect == 0 ? item.subCat[0].price = 5400 : 13000
 
-
-			item.subCat[1].active = data.houseArea < 70000 && data.countComp < 7 ? false : true // ук
-			item.subCat[1].activeSelect = data.houseArea > 300000 || data.countComp > 30 ? 1 : 0 // ук
-			item.subCat[1].activeSelect == 0 ? item.subCat[1].price = 8100 : 22600
-		} else if(item.id == 10) {
-			item.subCat[0].inputCalc = countComp //ук кашепровский
-			item.subCat[0].price = Math.ceil(countComp / 2) * item.onePrice  //ук кашепровский
+	function testSubCutActivated(array, id, subId, subProp,  dataSubProps) {
+		for(let item of array) {
+			if(item.id == id) {
+				if(item.subCat.length > 0) {
+					for(let item of item.subCat) {
+						if(item.id == subId) {
+							item[subProp] = eval(dataSubProps)
+						}
+					}
+				}
+			}
 		}
 	}
 
+	let arrayProps = configStep2.oneTimeCosts
 
-	for(let item of configStep2.monthlyCosts) {
-		if(item.id == 31) {
-			item.subCat[0].price = config.dsqMonthlyCosts //тсж техническая поддержка ПК АРКУС
-		} else if(item.id == 33) {
-			item.subCat[0].price = config.gis //тсж гис
-		} else if(item.id == 37) {
-			item.subCat[0].price = config.tehpom //тсж тех. пом.
-		} else if(item.id == 12) {
-			//---------------------
-			item.subCat[0].price = config.dsqMonthlyCosts //ук техническая поддержка ПК АРКУС
-		} else if(item.id == 14) {
-			item.subCat[0].price = config.gis //ук гис
-			item.subCat[3].price =  data.houseArea * 0.03 //ук диспетчерезация
-			item.subCat[3].active = data.houseArea >=150000 || data.countComp >=15 ? true : false // ук диспетчерезация
-		} else if(item.id == 21) {
-			item.subCat[0].price = config.tehpom //ук  тех. пом.
-		}
-	}
+	testSubCutActivated(arrayProps, 23, 24, 'price', config.dsqOneTimeCosts) // тсж площадь
+	testSubCutActivated(arrayProps, 29, 30, 'inputCalc', countComp) // тсж кашепровский
+	testSubCutActivated(arrayProps, 29, 30, 'price',  'Math.ceil(countComp / 2) * item.onePrice') // тсж кашепровский
+
+	testSubCutActivated(arrayProps, 0, 1, 'price',  config.dsqOneTimeCosts) // ук площадь
+	testSubCutActivated(arrayProps, 3, 5, 'active',  data.houseArea >=150000 || data.countComp >=15 ? true : false) // ук диспетчерезация
+	testSubCutActivated(arrayProps, 6, 7, 'activeSelect',  data.houseArea >=100000 || data.countComp >=10 ? 1 : 0) // ук Бухгалтерский учет, в т.ч.
+	testSubCutActivated(arrayProps, 6, 7, 'price', 'item.activeSelect == 0 ? 5400 : 13000') // ук Бухгалтерский учет, в т.ч.
+
+	testSubCutActivated(arrayProps, 6, 8, 'active', data.houseArea < 70000 && data.countComp < 7 ? false : true) // ук Бухгалтерский учет, в т.ч.
+	testSubCutActivated(arrayProps, 6, 8, 'activeSelect', data.houseArea > 300000 || data.countComp > 30 ? 1 : 0) // ук Бухгалтерский учет, в т.ч.
+	testSubCutActivated(arrayProps, 6, 8, 'price',' item.activeSelect == 0 ?  8100 : 22600') // ук Бухгалтерский учет, в т.ч.
+	
+	testSubCutActivated(arrayProps, 10, 11, 'inputCalc', countComp) //ук кашепровский
+	testSubCutActivated(arrayProps, 10, 11, 'price', 'Math.ceil(countComp / 2) * item.onePrice') //ук кашепровский
+
+
+	//ежемесячные расходы
+	let arrayPropsMoth = configStep2.monthlyCosts
+
+	testSubCutActivated(arrayPropsMoth, 31, 32, 'price', config.dsqMonthlyCosts) //тсж техническая поддержка ПК АРКУС
+	testSubCutActivated(arrayPropsMoth, 33, 34, 'price', config.gis)  //тсж гис
+	testSubCutActivated(arrayPropsMoth, 37, 38, 'price', config.tehpom) //тсж тех. пом.
+
+	testSubCutActivated(arrayPropsMoth, 12, 13, 'price', config.dsqMonthlyCosts) //ук техническая поддержка ПК АРКУС
+	testSubCutActivated(arrayPropsMoth, 14, 15, 'price', config.gis) //ук гис
+	testSubCutActivated(arrayPropsMoth, 14, 18, 'price', data.houseArea * 0.03 > 900 ?  data.houseArea * 0.03 : 900) //ук диспетчерезация
+	testSubCutActivated(arrayPropsMoth, 14, 18, 'active', data.houseArea >=150000 || data.countComp >=15 ? true : false) //ук диспетчерезация
+
+	testSubCutActivated(arrayPropsMoth, 19, 20, 'inputCalc',data.houseArea < 70000 && data.countComp < 7 ? 1 : 2) //ук диспетчерезация
+
+	testSubCutActivated(arrayPropsMoth, 21, 22, 'price', config.tehpom) //ук  тех. пом.
+
 
 	return configStep2
 

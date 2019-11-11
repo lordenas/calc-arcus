@@ -23,10 +23,9 @@
                                 v-model="item.active"
                                 v-if="!item.title"
                                 class="checkbox-row"
-                                style=""
                                 color="primary"
                                 :label="item.select ? '' : item.titleText"
-                                @change="calcRemove(index, 'oneTimeCosts')"
+                                @change="calcRemove(index, 'oneTimeCosts', item.id)"
                                 :disabled="item.disabled"
                             ></v-checkbox>
 
@@ -36,17 +35,13 @@
                                 :disabled="!item.active"
                                 class="calc-table-input"
                                 oninput="this.value = (()=>{
-                                    const f = x => ( (x.toString().includes('.')) ? (x.toString().split('.').pop().length) : (0) );
                                     this.value = this.value.replace(',','.').replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '')
-
-                                    if(/^(([1-9]\d*)|\d)(\.)?(\d{1,2})?$/.test(this.value)) {
-                                        return this.value.replace(',','.').replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '')
-                                    }
-
-                                    if(f(this.value) > 2) {
-                                        return parseFloat(this.value.replace(',','.').replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '')).toFixed(3).slice(0,-1)
+                                    if(this.value === '') {
+                                        return 1
+                                    } else if(this.value == 0) {
+                                        return 1
                                     } else {
-                                        return this.value.replace(',','.').replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '')
+                                        return this.value.replace(/[^\d;]/g, '')
                                     }
                                 })()"
                                 @input="()=>{
@@ -99,7 +94,8 @@
                                 class="checkbox-row"
                                 color="primary"
                                 :label="item.select ? '' : item.titleText"
-                                @change="calcRemove(index, 'monthlyCosts')"
+                                @change="calcRemove(index, 'monthlyCosts', item.id)"
+                                :disabled="item.disabled"
                             ></v-checkbox>
 
                             <input 
@@ -111,6 +107,16 @@
                                     formulaCalc(subIndex, index, item, 'monthlyCosts')
                                     calcRemove(index, 'monthlyCosts')
                                 }"
+                                oninput="this.value = (()=>{
+                                    this.value = this.value.replace(',','.').replace(/^\.|[^\d\.]|\.(?=.*\.)|^0+(?=\d)/g, '')
+                                    if(this.value === '') {
+                                        return 1
+                                    } else if(this.value == 0) {
+                                        return 1
+                                    } else {
+                                        return this.value.replace(/[^\d;]/g, '')
+                                    }
+                                })()"
                             />
 
 
@@ -152,8 +158,12 @@
                         color="success"
                         class="mr-4"
                         @click="()=>{
+                            this.dataConvert()
                             this.$router.push({
                                 name: 'step3',
+                                params: {
+                                    data: this.convertData
+                                }
                             })
                         }"
                     >
@@ -178,7 +188,17 @@
                 items: ['"1С: Бухгалтерия 8.3 Базовая версия"', '"1С: Бухгалтерия 8.3 ПРОФ"', ],
 
                 oneTimeCosts: [],
-                monthlyCosts: []
+                monthlyCosts: [],
+                convertData: [
+                    {
+                        Name: "Единовременные затраты",
+                        Items: []
+                    },
+                    {
+                        Name: "Ежемесячные затраты",
+                        Items: []
+                    },
+                ]
             }
         },
         mounted() {
@@ -216,16 +236,30 @@
                 let calc = eval(item.indFormula)
                 this[step][index].subCat[subIndex].price = calc
             },
-            calcRemove(index, data) {
+            calcRemove(index, data, id = null) {
                 let sumActive =  this[data][index].subCat.reduce((calc, item)=>{
                     return item.active ? item.price + calc : calc + 0
                 }, 0)
                 this[data][index].price = sumActive
+
+                //решение для диспетчерезации
+                if(id === 5) {
+                    this.monthlyCosts.forEach((item, index)=>{
+                        if(item.id === 14) {
+                            item.subCat.forEach((subItem, subIndex)=>{
+                                if(subItem.id == 18) {
+                                    subItem.active = !subItem.active
+                                    this.calcRemove(index, 'monthlyCosts')
+                                }
+                            })
+                        }
+                    })
+                }
             },
             changeSelect(index, subIndex, step) {
                 let activeSelect = this[step][index].subCat[subIndex].activeSelect
 
-                console.log(this[step][index].subCat[subIndex])
+                //console.log(this[step][index].subCat[subIndex])
                 this[step][index].subCat[subIndex].price =  this[step][index].subCat[subIndex].selectItems[activeSelect].price
             },
             openStep() {
@@ -234,16 +268,67 @@
                 this.monthlyCosts = optionsData.monthlyCosts
                 
                 for(let i = 0; i < this.oneTimeCosts.length; i++) {
-                     this.calcRemove(i, 'oneTimeCosts')
+                    this.calcRemove(i, 'oneTimeCosts')
                 }
-               for(let i = 0; i < this.oneTimeCosts.length; i++) {
-                     this.calcRemove(i, 'monthlyCosts')
+                for(let i = 0; i < this.oneTimeCosts.length; i++) {
+                    this.calcRemove(i, 'monthlyCosts')
                 }
+            },
+            dataConvert() {
+                this.convertData = [
+                    {
+                        Name: "Единовременные затраты",
+                        Items: []
+                    },
+                    {
+                        Name: "Ежемесячные затраты",
+                        Items: []
+                    },
+                ]
+
+                for(let item of this.oneTimeCosts) {
+                    let subItems = []
+                    if(item.subCat.length) {
+                        for(let subItem of item.subCat) {
+                            if(subItem.active) {
+                                subItems.push({
+                                    Name: subItem.titleText + ' - ' + subItem.inputCalc,
+                                    Sum: subItem.price
+                                })
+                            }
+                        }
+                    }
+                    this.convertData[0].Items.push({
+                        Name: item.titleText,
+                        Sum: item.price,
+                        Items: subItems
+                    })
+                }
+
+                for(let item of this.monthlyCosts) {
+                    let subItems = []
+                    if(item.subCat.length) {
+                        for(let subItem of item.subCat) {
+                            if(subItem.active) {
+                                subItems.push({
+                                    Name: subItem.titleText + ' - ' + subItem.inputCalc,
+                                    Sum: subItem.price
+                                })
+                            }
+                        }
+                    }
+                    this.convertData[1].Items.push({
+                        Name: item.titleText,
+                        Sum: item.price,
+                        Items: subItems
+                    })
+                }
+                console.log('this.convertData', this.convertData)
             }
         },
         watch: {
             '$route' (to) {
-                console.log('to.path', to.path)
+                //console.log('to.path', to.path)
                 if( to.path == '/step2') {
                     this.openStep()
                 }

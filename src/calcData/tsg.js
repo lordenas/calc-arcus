@@ -10,7 +10,7 @@ export default {
 			subCat: [
 				{
 					id: 24,
-					titleText: 'установка и внедрение на компьютеры компании',
+					titleText: 'Установка и внедрение на компьютеры компании',
 					title: false,
 					price: 20000,
 					sum: 0,
@@ -21,11 +21,11 @@ export default {
 				},
 				{
 					id: 25,
-					titleText: 'конвертация данных из предыдущей программы (укажите кол. месяцев)',
+					titleText: 'Конвертация данных из предыдущей программы (кол. месяцев)',
 					title: false,
 					price: 10000,
 					sum: 0,
-					active: false,
+					active: true,
 					inputCalc: 6,
 					input: true,
 					indFormula: '7000 + (item.inputCalc * 500)',
@@ -53,7 +53,7 @@ export default {
 				},
 				{
 					id: 28,
-					titleText: 'сервис 1С-Отчетность (лицензия на 1 год)',
+					titleText: 'Сервис 1С-Отчетность (лицензия на 1 год)',
 					title: false,
 					price: 4900,
 					sum: 0,
@@ -98,12 +98,13 @@ export default {
 			subCat: [
 				{
 					id: 32,
-					titleText: 'техническая поддержка ПК АРКУС',
+					titleText: 'Техническая поддержка ПК АРКУС',
 					title: false,
 					price: 1500,
 					sum: 0,
 					active: true,
 					input: false,
+					disabled: true,
 					inputCalc: 1
 				},
 			]
@@ -118,7 +119,7 @@ export default {
 			subCat: [
 				{
 					id: 34,
-					titleText: 'размещение информации в ГИС ЖКХ',
+					titleText: 'Размещение информации в ГИС ЖКХ',
 					title: false,
 					price: 2000,
 					sum: 0,
@@ -128,7 +129,7 @@ export default {
 				},
 				{
 					id: 35,
-					titleText: 'сайт для товариществ собственников жилья',
+					titleText: 'Сайт для товариществ собственников жилья',
 					title: false,
 					price: 400,
 					sum: 0,
@@ -148,7 +149,7 @@ export default {
 			subCat: [
 				{
 					id: 37,
-					titleText: 'резервное копирование базы данных 1С (1 шт.)',
+					titleText: 'Резервное копирование базы данных 1С (1 шт.)',
 					title: false,
 					price: 150,
 					sum: 0,
@@ -163,13 +164,13 @@ export default {
 			id: 37,
 			titleText: 'Техническая помощь, в т.ч.',
 			title: true,
-			price: 4200,
+			price: 0,
 			sum: 0,
 			active: false,
 			subCat: [
 				{
 					id: 38,
-					titleText: 'обслуживание техники',
+					titleText: 'Обслуживание компьютерной техники',
 					title: false,
 					price: 4200,
 					sum: 0,

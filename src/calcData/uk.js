@@ -10,7 +10,7 @@ export default {
 			subCat: [
 				{
 					id: 1,
-					titleText: 'установка и внедрение на компьютеры компании',
+					titleText: 'Установка и внедрение на компьютеры компании',
 					title: false,
 					price: 20000,
 					sum: 0,
@@ -21,15 +21,14 @@ export default {
 				},
 				{
 					id: 2,
-					titleText: 'конвертация данных из предыдущей программы (укажите кол. месяцев)',
+					titleText: 'Конвертация данных из предыдущей программы (кол. месяцев)',
 					title: false,
 					price: 13000,
 					sum: 0,
-					active: false,
+					active: true,
 					inputCalc: 12,
 					input: true,
 					indFormula: '7000 + (item.inputCalc * 500)',
-					
 				},
 			]
 		},
@@ -166,12 +165,13 @@ export default {
 			subCat: [
 				{
 					id: 13,
-					titleText: 'техническая поддержка ПК АРКУС',
+					titleText: 'Техническая поддержка ПК АРКУС',
 					title: false,
 					price: 1500,
 					sum: 0,
 					active: true,
 					input: false,
+					disabled: true,
 					inputCalc: 1
 				},
 			]
@@ -186,7 +186,7 @@ export default {
 			subCat: [
 				{
 					id: 15,
-					titleText: 'размещение информации в ГИС ЖКХ',
+					titleText: 'Размещение информации в ГИС ЖКХ',
 					title: false,
 					price: 2000,
 					sum: 0,
@@ -222,7 +222,8 @@ export default {
 					sum: 0,
 					active: true,
 					input: false,
-					inputCalc: 1
+					inputCalc: 1,
+					disabled: true
 				},
 			]
 		},
@@ -236,13 +237,13 @@ export default {
 			subCat: [
 				{
 					id: 20,
-					titleText: 'резервное копирование базы данных 1С ( шт.)',
+					titleText: 'Резервное копирование базы данных 1С ( шт.)',
 					title: false,
 					price: 150,
 					sum: 0,
 					active: true,
 					input: true,
-					inputCalc: 2,
+					inputCalc: 1,
 					indFormula: 'item.inputCalc * 150',
 				},
 			]
@@ -257,7 +258,7 @@ export default {
 			subCat: [
 				{
 					id: 22,
-					titleText: 'Обслуживание техники',
+					titleText: 'Обслуживание компьютерной техники',
 					title: false,
 					price: 150,
 					sum: 0,
