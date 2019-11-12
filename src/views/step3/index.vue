@@ -5,138 +5,78 @@
               fluid
               style="max-width: 900px"
             >
-
-                <v-row
-                    class="align-lg-start align-center justify-center justify-lg-space-between"
-                >
-                <div class="row-line"></div>
-                <div class="display-2 mb-5 mt-5 text-center">Вы можете</div>
-                <div class="row-line right-rope"></div>
-                </v-row>
+                <div class="title mb-5 mt-5 pt-5 text-center" style="margin-top: 60px !important;">Для получения расчета оставьте свои контактные данные</div>
                 <v-row
                     align="center"
-                    justify="space-between"
+                    justify="center"
                 >
                     <v-col
                         cols="12"
-                        sm="12"
-                        md="6"
-                        class="d-flex align-lg-start align-center justify-center justify-lg-center"
+                        sm="10"
+                        md="8"
                     >
-                        <div class="block-form">
-                            <div class="title mb-5 mt-5 text-center">Распечатать расчет</div>
-                            <v-row
-                                align="start"
-                                justify="center"
+                        <v-form
+                            ref="form"
+                            v-model="validPrint"
+                            lazy-validation
+                        >
+                            <v-text-field
+                                v-model="form.nameOrg"
+                                :rules="minRequere"
+                                label="Наименование организации"
+                                outlined
                             >
-                                <v-btn
-                                    :disabled="!valid"
-                                    color="success"
-                                    class="mr-4"
-                                    @click="validate"
-                                    outlined
-                                >
-                                        Распечатать
-                                </v-btn>
-                            </v-row>
-                        </div>
-                    </v-col>
-                    <v-col
-                        cols="12"
-                        sm="12"
-                        md="6"
-                       class="d-flex align-lg-end align-center justify-center justify-lg-center"
-                    >
-                        <div class="block-form">
-                            <div class="title mb-5 mt-5 text-center">Отправить расчет на почту</div>
-                            <v-form
-                                ref="formEmeil"
-                                v-model="valid"
-                                class="d-flex flex-column justify-space-between"
-                                lazy-validation
+                            </v-text-field>
+                        
+                            <v-text-field
+                                v-model="form.email"
+                                :rules="email"
+                                label="Email"
+                                outlined
                             >
-                                <v-text-field
-                                    v-model="formEmail.email"
-                                    :rules="minRequere"
-                                    label="Введите свой email"
-                                    required
-                                    solo
-                                >
-                                </v-text-field>
-                                <v-row
-                                    align="center"
-                                    justify="center"
-                                >
-                                    <v-btn
-                                        :disabled="!valid"
-                                        color="success"
-                                        class="mr-4"
-                                        @click="validate"
-                                        outlined
-                                    >
-                                        Отправить
-                                    </v-btn> 
-                                </v-row>
-                            </v-form>
-                        </div>
+                            </v-text-field>
+
+                            <v-text-field
+                                v-model="form.phone"
+                                :rules="phone"
+                                label="Телефон"
+                                v-mask="mask"
+                                placeholder="+7"
+                                outlined
+                            >
+                            </v-text-field>
+                        </v-form>
+                        <v-row
+                            align="center"
+                            justify="center"
+                        >
+                            <v-btn
+
+                                color="success"
+                                class="mr-4 mt-2"
+                                @click="sendTellMy()"
+                            >
+                                Позвоните мне
+                            </v-btn>
+                            <v-btn
+                         
+                                color="success"
+                                class="mr-4 mt-2"
+                                @click="sendToEmail()"
+                            >
+                                Отправить на email
+                            </v-btn> 
+                            <v-btn
+                                
+                                color="success"
+                                class="mr-4 mt-2"
+                                @click="toPrint()"
+                            >
+                                Распечатать
+                            </v-btn> 
+                        </v-row>
                     </v-col>
                 </v-row>
-
-                <div class="title mb-5 mt-5 pt-5 text-center" style="margin-top: 60px !important;">А лучше оставьте номер телефона - мы вам перезвоним, ответим на любые вопросы и обсудим детали сотрудничества</div>
-
-                <v-form
-                    ref="form"
-                    v-model="valid"
-                    lazy-validation
-                >
-                    <v-row
-                        align="center"
-                        justify="center"
-                    >
-                        <v-col
-                            cols="12"
-                            sm="10"
-                            md="6"
-                        >
-                                <v-text-field
-                                    v-model="form.name"
-                                    :rules="minRequere"
-                                    label="Имя"
-                                    solo
-                                    required
-                                >
-                                </v-text-field>
-
-                                <v-text-field
-                                    v-model="form.phone"
-                                    :rules="minRequere"
-                                    label="Телефон"
-                                    required
-                                    solo
-                                >
-                                </v-text-field>
-
-
-                                <v-row
-                                    align="center"
-                                    justify="center"
-                                >
-                                    <v-btn
-                                        :disabled="!valid"
-                                        color="success"
-                                        class="mr-4"
-                                        @click="validate"
-                                    >
-                                        Позвоните мне
-                                    </v-btn> 
-                                </v-row>
-                        </v-col>
-                        
-                    </v-row>
-
-                </v-form>
-
-
             </v-container>
         </v-content>
         <div class="background-footer"></div>
@@ -144,36 +84,58 @@
 </template>
 
 <script>
+    import { mask } from 'vue-the-mask'
+
     export default {
         data() {
             return {
-                valid: true,
+                validTellMy: true,
+                validPrint: true,
+                validEmail: true,
+                mask: '+7 ### ### ## ##',
                 form: {
                     name: '',
-                    phone: '',
+                    nameOrg: '',
+                    phone: '+7',
+                    email: '',
                 },
                 formEmail: {
                     email: '',
                 },
                 minRequere: [
                     v => !!v || 'Заполните это поле',
-                    v => !!v && v > 0 || 'Поле должно быть больше 0',
+                ],
+                email: [
+                    v => !!v || 'Заполните это поле',
+                    v => /.+@.+\..+/.test(v) || 'Введите E-mail',
+                ],
+                phone: [
+                    v => !!v || 'Заполните это поле',
+                    v => /^((\+7|7|8)+([0-9]){10})$/.test(v.replace(/\s/g, '')) || 'Введите номер телефона',
                 ],
             }
         },
         methods: {
-            validate () {
+            sendTellMy () {
                 if (this.$refs.form.validate()) {
-                    this.$router.push({
-                        name: 'step2',
-                        params: {
-                            data: this.form
-                        }
-                    })
+                    console.log('tell my')
                 }
             },
+            toPrint() {
+                if (this.$refs.form.validate()) {
+                    console.log('print')
+                }
+            },
+            sendToEmail() {
+                if (this.$refs.form.validate()) {
+                    console.log('test send to email')
+                }
+            }
 
-        }
+        },
+        directives: {
+            mask,
+        },
     }
 </script>
 

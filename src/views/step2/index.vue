@@ -162,7 +162,8 @@
                             this.$router.push({
                                 name: 'step3',
                                 params: {
-                                    data: this.convertData
+                                    dataConvert: this.convertData,
+                                    data: this.$route.params.data,
                                 }
                             })
                         }"
@@ -263,38 +264,38 @@
                 this[step][index].subCat[subIndex].price =  this[step][index].subCat[subIndex].selectItems[activeSelect].price
             },
             openStep() {
-                let optionsData = options(this.$route.params.data)
-                this.oneTimeCosts = optionsData.oneTimeCosts
-                this.monthlyCosts = optionsData.monthlyCosts
-                
-                for(let i = 0; i < this.oneTimeCosts.length; i++) {
-                    this.calcRemove(i, 'oneTimeCosts')
-                }
-                for(let i = 0; i < this.oneTimeCosts.length; i++) {
-                    this.calcRemove(i, 'monthlyCosts')
+                if(this.$route.params.data) {
+                    let optionsData = options(this.$route.params.data)
+                    this.oneTimeCosts = optionsData.oneTimeCosts
+                    this.monthlyCosts = optionsData.monthlyCosts
+                    
+                    for(let i = 0; i < this.oneTimeCosts.length; i++) {
+                        this.calcRemove(i, 'oneTimeCosts')
+                    }
+                    for(let i = 0; i < this.oneTimeCosts.length; i++) {
+                        this.calcRemove(i, 'monthlyCosts')
+                    }
                 }
             },
             dataConvert() {
-                this.convertData = [
-                    {
-                        Name: "Единовременные затраты",
-                        Items: []
-                    },
-                    {
-                        Name: "Ежемесячные затраты",
-                        Items: []
-                    },
-                ]
 
                 for(let item of this.oneTimeCosts) {
                     let subItems = []
                     if(item.subCat.length) {
                         for(let subItem of item.subCat) {
                             if(subItem.active) {
-                                subItems.push({
-                                    Name: subItem.titleText + ' - ' + subItem.inputCalc,
-                                    Sum: subItem.price
-                                })
+                                if(subItem.select) {
+                                    let name = subItem.selectItems[subItem.activeSelect].title
+                                    subItems.push({
+                                        Name: name,
+                                        Sum: subItem.price
+                                    })
+                                } else {
+                                    subItems.push({
+                                        Name: subItem.titleText + ( subItem.input ?  ' - ' + subItem.inputCalc : ''),
+                                        Sum: subItem.price
+                                    })
+                                }
                             }
                         }
                     }
@@ -323,7 +324,7 @@
                         Items: subItems
                     })
                 }
-                console.log('this.convertData', this.convertData)
+                console.log('this.convertData', JSON.parse(JSON.stringify(this.convertData)))
             }
         },
         watch: {

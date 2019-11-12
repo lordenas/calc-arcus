@@ -3,7 +3,7 @@ import dataFileTSG from '@/calcData/tsg'
 
 export default function(data) {
 
-	console.log('options', data)
+	//console.log('options', data)
 
 	let config = {}
 	let dsq = data.houseArea
@@ -145,8 +145,8 @@ export default function(data) {
 	testSubCutActivated(arrayProps, 29, 30, 'inputCalc', countComp) // тсж кашепровский
 	testSubCutActivated(arrayProps, 29, 30, 'price',  'Math.ceil(countComp / 2) * item.onePrice') // тсж кашепровский
 
-	testSubCutActivated(arrayProps, 0, 1, 'price',  config.dsqOneTimeCosts) // ук площадь
-	testSubCutActivated(arrayProps, 3, 5, 'active',  data.houseArea >=150000 || data.countComp >=15 ? true : false) // ук диспетчерезация
+	testSubCutActivated(arrayProps, 0, 1, 'price', config.dsqOneTimeCosts) // ук площадь
+	testSubCutActivated(arrayProps, 3, 5, 'active', data.houseArea >=150000 || data.countComp >=15 ? true : false) // ук диспетчерезация
 	testSubCutActivated(arrayProps, 6, 7, 'activeSelect',  data.houseArea >=100000 || data.countComp >=10 ? 1 : 0) // ук Бухгалтерский учет, в т.ч.
 	testSubCutActivated(arrayProps, 6, 7, 'price', 'item.activeSelect == 0 ? 5400 : 13000') // ук Бухгалтерский учет, в т.ч.
 
@@ -170,7 +170,8 @@ export default function(data) {
 	testSubCutActivated(arrayPropsMoth, 14, 18, 'price', data.houseArea * 0.03 > 900 ?  data.houseArea * 0.03 : 900) //ук диспетчерезация
 	testSubCutActivated(arrayPropsMoth, 14, 18, 'active', data.houseArea >=150000 || data.countComp >=15 ? true : false) //ук диспетчерезация
 
-	testSubCutActivated(arrayPropsMoth, 19, 20, 'inputCalc',data.houseArea < 70000 && data.countComp < 7 ? 1 : 2) //ук диспетчерезация
+	testSubCutActivated(arrayPropsMoth, 19, 20, 'inputCalc', data.houseArea < 70000 && data.countComp < 7 ? 1 : 2) //ук Резервное копирование
+	testSubCutActivated(arrayPropsMoth, 19, 20, 'price', data.houseArea < 70000 && data.countComp < 7 ? 150 : 300) //ук Резервное копирование
 
 	testSubCutActivated(arrayPropsMoth, 21, 22, 'price', config.tehpom) //ук  тех. пом.
 

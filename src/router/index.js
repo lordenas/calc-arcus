@@ -44,9 +44,9 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to)
+/*   console.log(to)
   console.log('from', from)
-  console.log(next)
+  console.log(next) */
   if(from.name === null && to.name !== 'step1') {
     next({
 			replace: true,
